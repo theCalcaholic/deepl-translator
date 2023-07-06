@@ -29,17 +29,17 @@ def translate_paragraph(str_in: str) -> str:
     if str_in == "":
         return ""
     result = translator.translate_text(str_in,
-                                     source_lang=deepl.Language.ENGLISH,
-                                     target_lang=deepl.Language.GERMAN,
-                                     preserve_formatting=True)
+                                       source_lang=deepl.Language.ENGLISH,
+                                       target_lang=deepl.Language.GERMAN,
+                                       preserve_formatting=True)
     if isinstance(result, deepl.TextResult):
         return result.text
     return result[0].text
 
 
 def translate_file(path: Path):
-    with path.open("r") as input_handle:
-        with path.with_stem(path.stem + "_output").open("w") as output_handle:
+    with path.open("r", encoding='utf-8', errors='ignore') as input_handle:
+        with path.with_stem(path.stem + "_output").open("w", encoding='utf-8') as output_handle:
             input_lines = input_handle.readlines()
             input_ps = reduce_paragraphs([""], input_lines)
             for p in input_ps:
@@ -51,5 +51,3 @@ if __name__ == '__main__':
         if path.stem.endswith("_output"):
             continue
         translate_file(path)
-
-
