@@ -26,6 +26,8 @@ def reduce_paragraphs(paras: List[str], lines):
 
 
 def translate_paragraph(str_in: str) -> str:
+    if str_in == "":
+        return ""
     result = translator.translate_text(str_in,
                                      source_lang=deepl.Language.ENGLISH,
                                      target_lang=deepl.Language.GERMAN,
@@ -35,12 +37,19 @@ def translate_paragraph(str_in: str) -> str:
     return result[0].text
 
 
-if __name__ == '__main__':
-    with Path("data/input.md").open("r") as input_handle:
-        with Path("data/output.md").open("w") as output_handle:
+def translate_file(path: Path):
+    with path.open("r") as input_handle:
+        with path.with_stem(path.stem + "_output").open("w") as output_handle:
             input_lines = input_handle.readlines()
             input_ps = reduce_paragraphs([""], input_lines)
             for p in input_ps:
                 output_handle.write(f"{translate_paragraph(p)}\n\n")
+
+
+if __name__ == '__main__':
+    for path in Path("data").glob("*.md"):
+        if path.stem.endswith("_output"):
+            continue
+        translate_file(path)
 
 
